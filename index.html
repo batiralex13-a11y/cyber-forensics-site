@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальная лаборатория — Киберкриминалистика</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Фоновое видео (YouTube Embed) -->
+    <div class="bg-video-container">
+        <iframe
+            src="https://www.youtube.com/embed/62k1M0u8y1c?autoplay=1&mute=1&loop=1&playlist=62k1M0u8y1c&controls=0&showinfo=0&autohide=1&modestbranding=1"
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <!-- Модальное окно регистрации -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Регистрация в системе</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                Заполните данные для доступа к изолированной лаборатории.
+            </p>
+            <form id="auth-form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="fullname">ФИО студента</label>
+                    <input type="text" id="fullname" required placeholder="Турганбаев Батирбек">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Номер телефона</label>
+                    <input type="tel" id="phone" required placeholder="+998 (90) 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label for="card">Пластиковая карта</label>
+                    <input type="text" id="card" maxlength="19" required placeholder="8600 0000 0000 0000">
+                </div>
+                <button type="submit" class="modal-btn">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно оплаты подписки -->
+    <div id="payment-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <h2>Оплата лимита трафика</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                Стоимость продления пакета (20 ГБ): <strong style="color: var(--accent-cyan);">100 000 сум</strong>
+            </p>
+            <form id="payment-form" onsubmit="processPayment(event)">
+                <div class="form-group">
+                    <label for="pay-card-input">Номер карты</label>
+                    <input type="text" id="pay-card-input" required placeholder="8600 0000 0000 0000">
+                </div>
+                <div class="form-group">
+                    <label for="pay-cvv">Срок действия / CVV</label>
+                    <input type="text" id="pay-cvv" required placeholder="12/28 • 123">
+                </div>
+                <button type="submit" class="modal-btn">Оплатить 100 000 сум</button>
+                <button type="button" class="modal-btn" style="margin-top: 10px; background: rgba(255,255,255,0.1); color: #fff;" onclick="document.getElementById('payment-modal').style.display='none'">Отмена</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="header-title">Cyber Forensics Lab</h1>
+        <p style="color: var(--text-muted); margin-top: 0;">
+            Безопасная интерактивная полигон-среда для анализа угроз и тестирования на проникновение
+        </p>
+
+        <!-- Кабинет ученика и шкала лимита трафика -->
+        <div class="user-status-card">
+            <div>
+                <span style="color: var(--text-muted); font-size: 13px;">Профиль ученика:</span><br>
+                <strong id="display-username" style="font-size: 18px; color: var(--accent-cyan);">Студент</strong>
+            </div>
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; gap: 16px;">
+                    <span>Лимит трафика:</span>
+                    <span id="traffic-text">0.0 / 20 ГБ</span>
+                </div>
+                <div class="traffic-bar-container">
+                    <div id="traffic-fill" class="traffic-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Сетка доступных модулей -->
+        <h2 style="font-size: 18px; margin-bottom: 6px;">Доступные модули:</h2>
+        <div id="labs-container" class="labs-grid">
+            <p style="color: var(--text-muted);">Загрузка доступных модулей...</p>
+        </div>
+
+        <!-- Панель выбранной лаборатории -->
+        <div id="active-panel" class="active-lab-panel">
+            <h2 id="selected-lab-title" style="margin-top: 0;"></h2>
+            <p id="selected-lab-desc" style="color: var(--text-muted);"></p>
+
+            <button id="start-btn" class="btn-action" onclick="launchVirtualLab()">
+                Запустить виртуальную среду
+            </button>
+
+            <!-- Блок ограничения доступа при исчерпании 20 ГБ -->
+            <div id="paywall" class="paywall-box">
+                <h3 style="margin: 0 0 8px; color: #ff5555;">⚠️ Лимит виртуального трафика (20 ГБ) исчерпан!</h3>
+                <p style="margin: 0; color: var(--text-muted); font-size: 14px;">
+                    Для продолжения работы в изолированной среде необходима оплата подписки на 100 000 сум.
+                </p>
+                <button class="paywall-btn" onclick="openPaymentModal()">Перейти к оплате 100 000 сум</button>
+            </div>
+
+            <!-- Виртуальный экран с видеоуроком -->
+            <div id="virtual-screen" class="virtual-screen">
+                <div class="screen-header">
+                    <span>● ИЗОЛИРОВАННАЯ СРЕДА: АКТИВНО <strong id="display-username-screen"></strong></span>
+                    <span>VM: kali-forensics-x64</span>
+                </div>
+                <div class="screen-body">
+                    <iframe
+                        id="lesson-video"
+                        src=""
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Интерактивная аудиокнига по мотивам Н. Н. Федотова -->
+            <div id="audiobook-box" class="audiobook-section" style="display: none;">
+                <div class="audiobook-top">
+                    <div>
+                        <strong style="color: var(--accent-cyan);">🎧 Аудиокнига-чтец:</strong>
+                        <span id="audio-chapter-title" style="color: var(--text-main); margin-left: 6px;"></span>
+                    </div>
+                    <div class="audiobook-controls">
+                        <select id="audio-voice" class="audio-speed" title="Выбор голоса">
+                            <option value="">Автовыбор голоса</option>
+                        </select>
+                        <select id="audio-rate" class="audio-speed" title="Скорость чтения">
+                            <option value="0.9">0.9x</option>
+                            <option value="1" selected>1.0x</option>
+                            <option value="1.2">1.2x</option>
+                        </select>
+                        <button type="button" class="audio-btn" onclick="startBookReading()">▶ Читать раздел</button>
+                        <button type="button" class="audio-btn" onclick="readSelectedBookText()">✂ Озвучить выделенное</button>
+                        <button type="button" class="audio-stop-btn" onclick="stopBookReading()">■ Стоп</button>
+                    </div>
+                </div>
+                <div id="audiobook-text" class="audiobook-text"></div>
+            </div>
+
+            <!-- Контрольная работа и ИИ-помощник -->
+            <div id="exam-box" class="exam-box">
+                <h3 id="exam-title" style="margin-top: 0;">📝 Контрольная работа по итогам видеоурока</h3>
+                <div id="exam-content"></div>
+                <button class="btn-action" onclick="submitExam()">Отправить на проверку ИИ-агенту</button>
+
+                <div id="agent-response" class="agent-response-box"></div>
+
+                <div class="ai-chat-box">
+                    <h4>🤖 ИИ-Агент по книге Н. Н. Федотова</h4>
+                    <div id="ai-chat-output" class="ai-output">
+                        Задайте вопрос ИИ-агенту, если возникли трудности с решением...
+                    </div>
+                    <div class="ai-input-row">
+                        <input id="ai-question-input" type="text" placeholder="Например: Как проверяют целостность данных и хэши?">
+                        <button type="button" class="ai-send-btn" onclick="askAIAgent()">Спросить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

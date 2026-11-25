@@ -1,0 +1,472 @@
+:root {
+    --bg-dark: #090d16;
+    --bg-card: rgba(18, 24, 38, 0.88);
+    --bg-panel: rgba(15, 19, 29, 0.94);
+    --text-main: #e6edf3;
+    --text-muted: #8b949e;
+    --accent-cyan: #00e5ff;
+    --accent-green: #00e676;
+    --accent-purple: #8b5cf6;
+    --border-color: rgba(148, 163, 184, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Фоновое видео и затемнение */
+.bg-video-container {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bg-video-container iframe {
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    transform: scale(1.2);
+    opacity: 0.35;
+}
+
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(circle at top, rgba(0, 229, 255, 0.08), transparent 55%),
+                linear-gradient(180deg, rgba(9, 13, 22, 0.78) 0%, rgba(9, 13, 22, 0.95) 100%);
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+}
+
+.header-title {
+    margin: 0 0 8px;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Кабинет ученика */
+.user-status-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0 32px;
+    padding: 18px 22px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+}
+
+.traffic-bar-container {
+    width: 240px;
+    max-width: 100%;
+    height: 10px;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.traffic-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+    transition: width 0.3s ease;
+}
+
+/* Сетка модулей */
+.labs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin: 18px 0 32px;
+}
+
+.lab-card {
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lab-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-cyan);
+}
+
+.lab-card.active {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.16);
+}
+
+.lab-card h3 {
+    margin: 0 0 12px;
+    font-size: 1.08rem;
+    color: var(--text-main);
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 999px;
+    color: var(--accent-cyan);
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+/* Панель активной лаборатории */
+.active-lab-panel {
+    display: none;
+    padding: 24px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+}
+
+.btn-action {
+    margin-top: 10px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #061018;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-action:hover {
+    filter: brightness(1.06);
+}
+
+/* Пейволл при превышении лимита */
+.paywall-box {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 75, 75, 0.08);
+    border: 1px solid rgba(255, 75, 75, 0.45);
+    border-radius: 12px;
+}
+
+.paywall-btn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-weight: 600;
+    color: #fff;
+    background: #e53935;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Виртуальный экран */
+.virtual-screen {
+    display: none;
+    margin-top: 22px;
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #05080f;
+}
+
+.screen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 13px;
+    background: #111827;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-green);
+}
+
+.screen-body {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+}
+
+.screen-body iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Аудиокнига-чтец */
+.audiobook-section {
+    margin-top: 20px;
+    background: rgba(15, 19, 29, 0.92);
+    border: 1px solid var(--accent-purple);
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.audiobook-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.audiobook-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.audio-btn {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.audio-stop-btn {
+    background: rgba(255, 75, 75, 0.2);
+    color: #ff6b6b;
+    border: 1px solid #ff4b4b;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.audio-speed {
+    background: #161b26;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 7px 10px;
+}
+
+.audiobook-text {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    max-height: 170px;
+    overflow-y: auto;
+    padding: 12px;
+    background: #090d16;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    user-select: text;
+}
+
+.audiobook-text.is-reading {
+    border-color: var(--accent-green);
+    color: var(--text-main);
+}
+
+/* Контрольная работа и ИИ-помощник */
+.exam-box {
+    display: none;
+    margin-top: 22px;
+    padding: 20px;
+    background: rgba(13, 18, 30, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.question-item {
+    margin-bottom: 16px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.question-item strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.question-item label {
+    display: block;
+    margin: 6px 0;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.code-input-area {
+    width: 100%;
+    min-height: 110px;
+    padding: 12px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    color: var(--text-main);
+    background: #070b12;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    resize: vertical;
+}
+
+.agent-response-box {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.agent-response-box.success {
+    background: rgba(0, 230, 118, 0.1);
+    border-color: var(--accent-green);
+    color: #b9f6ca;
+}
+
+.agent-response-box.error {
+    background: rgba(255, 85, 85, 0.12);
+    border-color: #ff5555;
+    color: #ff9e9e;
+}
+
+.ai-chat-box {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-color);
+}
+
+.ai-chat-box h4 {
+    margin: 0 0 10px;
+    color: var(--accent-cyan);
+}
+
+.ai-output {
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre-line;
+    color: var(--text-main);
+    background: #080c14;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.ai-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.ai-input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-main);
+    background: #080c14;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.ai-send-btn {
+    padding: 10px 18px;
+    font-weight: 600;
+    color: #061018;
+    background: var(--accent-cyan);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Модальные окна */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(4, 7, 13, 0.85);
+    backdrop-filter: blur(6px);
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    background: #111726;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+}
+
+.modal-card h2 {
+    margin: 0 0 8px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--text-main);
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #061018;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .ai-input-row {
+        flex-direction: column;
+    }
+
+    .traffic-bar-container {
+        width: 100%;
+    }
+}
